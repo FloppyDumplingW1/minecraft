@@ -7,7 +7,7 @@ local Settings = _G.Settings or {
 	CollectOrb = true,
 	AutoExec = true,
 	AutoShutdown = false,
-    Webhook = "",
+    Webhook = "https://discord.com/api/webhooks/1240228133119066123/vqs6q0ZWFi9D8U0_4pzzOAPyk0MA4JcE0-IHUv0JPXfDwdn-rr5GnIAVVs209goCcw6r",
     DisableCodex = true,
     FPSBoost = true,
 }
