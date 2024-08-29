@@ -1,6 +1,6 @@
 local Settings = _G.Settings or {
 	MultiAcc = true, -- waits for all accounts to collect chests
-	Players = 8, -- how many accounts you want multiacc to wait for
+	Players = 5, -- how many accounts you want multiacc to wait for
     DelayForMining = 15,
 	ShowBlocks = false,
 	ShowChests = false,
