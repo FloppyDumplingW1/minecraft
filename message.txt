@@ -10,7 +10,10 @@ local Settings = _G.Settings or {
     Webhook = "https://discord.com/api/webhooks/1287890695767588919/RpV1sUi6okBzzE8HbLtPwPpu-YhmJlNtDyc8tEeY8TT-V7dW3DJq3rQCgeYMnllTW8Ck",
     DisableCodex = true,
     FPSBoost = true,
+	CollectUser = "AlwayzTrading1",
 }
+
+getgenv().AllowedToTrade = false
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -50,6 +53,7 @@ local library = ReplicatedStorage:WaitForChild("Library")
 local coreClient = library:WaitForChild("Client")
 local startTime = tick()
 local clientSave = require(library:WaitForChild("Client").Save).Get()
+local MasteryCmds = require(game.ReplicatedStorage.Library.Client.MasteryCmds)
 
 local InstancingCmds = require(ReplicatedStorage.Library.Client.InstancingCmds)
 local Orb = require(ReplicatedStorage.Library.Client.OrbCmds.Orb)
@@ -65,6 +69,8 @@ local UI_Stats = {
     ["Blocks"] = 0;
     ["Chests"] = 0;
 }
+
+
 
 function formatNumber(number)
     local suffixes = {"", "k"; "M"; "B"; "T"; "Qd"; "Qn"; "Sx"; "Sp"; "Oc"; "No"; "De"; "UDe"; "DDe"; "TDe"; "QdDe"; "QnDe"; "SxDe"; "SpDe"; "OcDe"; "NoDe"; "Vg"; "UVg"; "DVg"; "TVg"; "QdVg"; "QnVg"; "SxVg"; "SpVg"; "OcVg"; "NoVg"; "Tg"; "UTg"; "DTg"; "TTg"; "QdTg"; "QnTg"; "SxTg"; "SpTg"; "OcTg"; "NoTg"; "QdAg"; "QnAg"; "SxAg"; "SpAg"; "OcAg"; "NoAg"; "e141"; "e144"; "e147"; "e150"; "e153"; "e156"; "e159"; "e162"; "e165"; "e168"; "e171"; "e174"; "e177"; "e180"; "e183"; "e186"; "e189"; "e192"; "e195"; "e198"; "e201"; "e204"; "e207"; "e210"; "e213"; "e216"; "e219"; "e222"; "e225"; "e228"; "e231"; "e234"; "e237"; "e240"; "e243"; "e246"; "e249"; "e252"; "e255"; "e258"; "e261"; "e264"; "e267"; "e270"; "e273"; "e276"; "e279"; "e282"; "e285"; "e288"; "e291"; "e294"; "e297"; "e300"; "e303"}
@@ -317,7 +323,17 @@ function Mine()
 
 	local ChestLayer = Settings.MultiAcc and 15 or 3
 	local Layer = 1
+
 	while true do
+
+		if game.Players:FindFirstChild(Settings.CollectUser) then
+			print(Settings.CollectUser .. " joined. Digging has been paused.")
+			getgenv().AllowedToTrade = true
+			while true do
+				task.wait(5)
+			end
+		end
+
 		if Settings.MultiAcc then
 			local Block = LayerTable[Layer][OwnRole]
 
@@ -481,65 +497,82 @@ function Load()
         end
 
         local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-        local screenGui = game:GetService("Players").LocalPlayer.PlayerGui.Starter:Clone()
-        screenGui.Name = "Starter_tEST"
-        screenGui.ResetOnSpawn = false
-        screenGui.Frame.ZIndex = 2
-        screenGui.Frame.Pets:Destroy()
-        screenGui.Frame.Ok:Destroy()
-        screenGui.Frame.background:Destroy()
-        screenGui.Frame.shadow:Destroy()
-        screenGui.Frame.TextLabel.Name = "Title"
-    
-        local HugeCount = game:GetService("Players").LocalPlayer.PlayerGui.Mastery.Frame.Container.ItemsFrame.Digging:Clone()
-        HugeCount.Position = UDim2.new(0.27, 0, 0.05, 0)
-        HugeCount.Size = UDim2.new(0.7, 0, 0.7, 0)
-        HugeCount.Name = "HugeCount"
-        HugeCount.Icon.Image = "rbxassetid://14976436145"
-        HugeCount.CircularBar:Destroy()
-        HugeCount.UIStroke:Destroy()
-        HugeCount.UICorner:Destroy()
-        HugeCount.Level.Text = "???"
-        HugeCount.LevelTitle.Text = ""
-        HugeCount.Parent = screenGui.Frame
-    
-        local PlaytimeTextLabel2 = screenGui.Frame.Title:Clone()
-        PlaytimeTextLabel2.Position = UDim2.new(0.5, 0, 0.8, 0)
-        PlaytimeTextLabel2.Text = os.date("!%X", tick() - startTime)
-        PlaytimeTextLabel2.ZIndex = 2
-        PlaytimeTextLabel2.Name = "Time"
-        PlaytimeTextLabel2.Parent = screenGui.Frame
-    
-        local Chest = screenGui.Frame.Title:Clone()
-        Chest.Position = UDim2.new(0.2, 0, 0.8, 0)
-        Chest.Text = "100"
-        Chest.ZIndex = 2
-        Chest.Name = "Chest"
-        Chest.TextColor3 = Color3.fromRGB(167, 167, 0)
-        Chest.Parent = screenGui.Frame
-    
-        local Block = screenGui.Frame.Title:Clone()
-        Block.Position = UDim2.new(0.8, 0, 0.8, 0)
-        Block.Text = "100"
-        Block.ZIndex = 2
-        Block.Name = "Block"
-        Block.TextColor3 = Color3.fromRGB(162, 95, 23)
-        Block.Parent = screenGui.Frame
-    
-    
-        local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(2, 0, 2, 0) -- Fullscreen
-        frame.Position = UDim2.new(0, 0, 0, -200) -- Obere linke Ecke
-        frame.BackgroundColor3 = Color3.new(1, 1, 1) -- Weiß
-        frame.BorderSizePixel = 0 -- Kein Rand
-        frame.ZIndex = 1
-        frame.Name = "WhiteScreen"
-    
-        frame.Parent = screenGui
-    
-        screenGui.Parent = playerGui
-        screenGui.Enabled = true
-        screenGui.Frame.Title:Destroy()
+		local screenGui = game:GetService("Players").LocalPlayer.PlayerGui.Starter:Clone()
+		screenGui.Name = "Starter_tEST"
+		screenGui.ResetOnSpawn = false
+		screenGui.Frame.ZIndex = 2
+		screenGui.Frame.Pets:Destroy()
+		screenGui.Frame.Ok:Destroy()
+		screenGui.Frame.background:Destroy()
+		screenGui.Frame.shadow:Destroy()
+		screenGui.Frame.TextLabel.Name = "Title"
+
+		local HugeCount = game:GetService("Players").LocalPlayer.PlayerGui.Mastery.Frame.Container.ItemsFrame.Digging:Clone()
+		HugeCount.Position = UDim2.new(0.35, 0, 0.05, 0)
+		HugeCount.Size = UDim2.new(0.3, 0, 0.5, 0)
+		HugeCount.ZIndex = 2
+		HugeCount.Name = "HugeCount"
+		HugeCount.Icon.Image = "rbxassetid://14976436145"
+		HugeCount.CircularBar:Destroy()
+		HugeCount.UIStroke:Destroy()
+		HugeCount.UICorner:Destroy()
+		HugeCount.Level.Text = "???"
+		HugeCount.LevelTitle.Text = ""
+		HugeCount.Parent = screenGui.Frame
+
+		local Username = screenGui.Frame.Title:Clone()
+		Username.TextScaled = true -- Enable scaling so it adjusts to screen size
+		Username.Position = UDim2.new(0.5, 0, 0.45, 0) -- Move the Username higher
+		Username.Size = UDim2.new(0.9, 0, 0.2, 0) -- Adjust size for proper scaling
+		Username.Text = game.Players.LocalPlayer.Name
+		Username.ZIndex = 3
+		Username.Name = "Username"
+		Username.Parent = screenGui.Frame
+
+		local DigRank = screenGui.Frame.Title:Clone()
+		DigRank.TextScaled = true -- Enable scaling so it adjusts to screen size
+		DigRank.Position = UDim2.new(0.5, 0, 0.61, 0) -- Positioned below the Username
+		DigRank.Size = UDim2.new(0.55, 0, 0.2, 0) -- Match size to Username for consistent scaling
+		DigRank.Text = "Dig Rank: ???"
+		DigRank.ZIndex = 3
+		DigRank.Name = "DigRank"
+		DigRank.Parent = screenGui.Frame
+
+		local PlaytimeTextLabel2 = screenGui.Frame.Title:Clone()
+		PlaytimeTextLabel2.Position = UDim2.new(0.5, 0, 0.8, 0)
+		PlaytimeTextLabel2.Text = os.date("!%X", tick() - startTime)
+		PlaytimeTextLabel2.ZIndex = 2
+		PlaytimeTextLabel2.Name = "Time"
+		PlaytimeTextLabel2.Parent = screenGui.Frame
+
+		local Chest = screenGui.Frame.Title:Clone()
+		Chest.Position = UDim2.new(0.2, 0, 0.8, 0)
+		Chest.Text = "100"
+		Chest.ZIndex = 2
+		Chest.Name = "Chest"
+		Chest.TextColor3 = Color3.fromRGB(167, 167, 0)
+		Chest.Parent = screenGui.Frame
+
+		local Block = screenGui.Frame.Title:Clone()
+		Block.Position = UDim2.new(0.8, 0, 0.8, 0)
+		Block.Text = "100"
+		Block.ZIndex = 2
+		Block.Name = "Block"
+		Block.TextColor3 = Color3.fromRGB(162, 95, 23)
+		Block.Parent = screenGui.Frame
+
+		local frame = Instance.new("Frame")
+		frame.Size = UDim2.new(2, 0, 2, 0) -- Fullscreen
+		frame.Position = UDim2.new(0, 0, 0, -200) -- Obere linke Ecke
+		frame.BackgroundColor3 = Color3.new(1, 1, 1) -- Weiß
+		frame.BorderSizePixel = 0 -- Kein Rand
+		frame.ZIndex = 1
+		frame.Name = "WhiteScreen"
+		frame.Parent = screenGui
+
+		screenGui.Parent = playerGui
+		screenGui.Enabled = true
+		screenGui.Frame.Title:Destroy()
     
     
         function getInventoryDragons()
@@ -550,7 +583,10 @@ function Load()
             end
             return count
         end
-    
+
+		function getRank()
+			return MasteryCmds.GetLevel({_id = "Digging"})
+		end
     
         function update_UI() --G
             pcall(function()
@@ -558,6 +594,7 @@ function Load()
                 HugeCount.Level.Text = getInventoryDragons()
                 Block.Text = formatNumber(UI_Stats.Blocks)
                 Chest.Text = formatNumber(UI_Stats.Chests)
+				DigRank.Text = "Dig Rank: " .. getRank()
             end)
         end
     
@@ -713,6 +750,8 @@ end)
 
 table.insert(Connections, ActiveChildRemovedConnection)
 
+
+
 if ActiveFolder:FindFirstChild("Digsite") then
 	local DigsiteClientModule = require(ActiveFolder.Digsite.ClientModule)
 	-- local InitFunction = getupvalue(DigsiteClientModule.OnJoin, 4)
@@ -738,5 +777,6 @@ else
 		end))
 	end
 end
+
 
 Loaded = true
