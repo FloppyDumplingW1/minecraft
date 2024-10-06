@@ -293,7 +293,7 @@ function Mine()
 	if Settings.AutoShutdown then
 		local Shutdown = not Settings.MultiAcc or (Settings.MultiAcc and CheckLayersComplete())
 		if Shutdown then
-			Player:Kick("Auto Shutdown")
+			-- Player:Kick("Auto Shutdown")
 			game:Shutdown() -- Test
 		end
 	end
