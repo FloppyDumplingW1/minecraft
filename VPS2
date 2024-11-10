@@ -19,20 +19,8 @@ local Settings = _G.Settings or {
 	CollectUser = "AlwayzTrading1",
 	KickForNoneFriendly = true,
 	FriendlyAccounts = {
-    "CosmicMooseFizz", "JellyfishCometSnipe", "ToastyZebraBlitz", "TurboCactusNinja", 
-    "SneezyPandaZap", "FrostyGorillaBuzz", "CosmicChameleonRex", "FluffyNoodleDash", 
-    "QuantumPandaFizz", "BlazingSphinxByte", "WhiskerNinjaZap", "QuirkyLobsterWhirl", 
-    "FrostedLlamaSnipe", "BlazingOtterZoom", "TurboWombatTwist", "CosmicTigerSprout", 
-    "PixelFrogBlast", "PuddlePenguinNinja", "TurboMothFusion", "QuirkyNarwhalByte", 
-    "SparkleLynxDash", "WhimsicalRavenZap", "GlitchyKoalaBlitz", "TwistyGiraffeWhiz", 
-    "AtomicPenguinBlast", "FuzzyDragonSnipe", "QuirkyPuffinBuzz", "ThunderCheetahTwist", 
-    "PixelKoalaFuzz", "TurboMuffinZap", "schulmyo0242", "mausolqo2627", "rahnerqa0253", 
-    "hingaxu9073", "boedigke4011", "pebleyme6403", "jamrozpi8763", "schnapgu4053", 
-    "somervqa5706", "argusvi6087", "spennyyu2764", "nivisomu6886", "perovipi0613", 
-    "slavinyi2147", "fatemifo0231", "revoirfu3847", "roerigme1586", "quindtpa8126", 
-    "cortsyo0474", "gruettze1510", "killinmo5783", "pattievo8834", "prusacje6548", 
-    "omarysa6572"
-		
+	"CosmicMooseFizz", "JellyfishCometSnipe", "ToastyZebraBlitz", "TurboCactusNinja", "SneezyPandaZap", "FrostyGorillaBuzz", "CosmicChameleonRex", "FluffyNoodleDash", "QuantumPandaFizz", "BlazingSphinxByte", "WhiskerNinjaZap", "QuirkyLobsterWhirl", "FrostedLlamaSnipe", "BlazingOtterZoom", "TurboWombatTwist", "CosmicTigerSprout", "PixelFrogBlast", "PuddlePenguinNinja", "TurboMothFusion", "QuirkyNarwhalByte", "SparkleLynxDash", "WhimsicalRavenZap", "GlitchyKoalaBlitz", "TwistyGiraffeWhiz", "AtomicPenguinBlast", "FuzzyDragonSnipe", "QuirkyPuffinBuzz", "ThunderCheetahTwist", "PixelKoalaFuzz", "TurboMuffinZap", "schulmyo0242", "mausolqo2627", "rahnerqa0253", "hingaxu9073", "boedigke4011", "pebleyme6403", "jamrozpi8763", "schnapgu4053", "somervqa5706", "argusvi6087", "spennyyu2764", "nivisomu6886", "perovipi0613", "slavinyi2147", "fatemifo0231", "revoirfu3847", "roerigme1586", "quindtpa8126", "cortsyo0474", "gruettze1510", "killinmo5783", "pattievo8834", "prusacje6548", "omarysa6572"
+
 	},
 }
 
