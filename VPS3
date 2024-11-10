@@ -11,7 +11,7 @@ local Settings = _G.Settings or {
 	Gui = true,
 	AutoShutdown = false,
 	AllWebhook = "https://discord.com/api/webhooks/1287890695767588919/RpV1sUi6okBzzE8HbLtPwPpu-YhmJlNtDyc8tEeY8TT-V7dW3DJq3rQCgeYMnllTW8Ck",
-    SpecificWebhook = "https://discord.com/api/webhooks/1305189786637832314/dxiYGfr1Mi1aEMrrGQObjKLJqODrZxBt2WYJSr5I579MYOAciI7OfdsQg1VcpI4uNPqr",
+    SpecificWebhook = "https://discord.com/api/webhooks/1305233074857971876/qael-3cylfh_gOJv-HEXDPZYhii9TEJ8fv7hwOAuzsG8zyM3hV6xW8naL1NV2uD6jvYr",
     DisableCodex = true,
     FPSBoost = true,
 	MailHuges = false,
@@ -19,7 +19,7 @@ local Settings = _G.Settings or {
 	CollectUser = "AlwayzTrading1",
 	KickForNoneFriendly = true,
 	FriendlyAccounts = {
-		CosmicMooseFizz = true, JellyfishCometSnipe = true, ToastyZebraBlitz = true, TurboCactusNinja = true, SneezyPandaZap = true, FrostyGorillaBuzz = true, CosmicChameleonRex = true, FluffyNoodleDash = true, QuantumPandaFizz = true, BlazingSphinxByte = true, WhiskerNinjaZap = true, QuirkyLobsterWhirl = true, FrostedLlamaSnipe = true, BlazingOtterZoom = true, TurboWombatTwist = true, CosmicTigerSprout = true, PixelFrogBlast = true, PuddlePenguinNinja = true, TurboMothFusion = true, QuirkyNarwhalByte = true, SparkleLynxDash = true, WhimsicalRavenZap = true, GlitchyKoalaBlitz = true, TwistyGiraffeWhiz = true, AtomicPenguinBlast = true, FuzzyDragonSnipe = true, QuirkyPuffinBuzz = true, ThunderCheetahTwist = true, PixelKoalaFuzz = true, TurboMuffinZap = true, schulmyo0242 = true, mausolqo2627 = true, rahnerqa0253 = true, hingaxu9073 = true, boedigke4011 = true, pebleyme6403 = true, jamrozpi8763 = true, schnapgu4053 = true, somervqa5706 = true, argusvi6087 = true, spennyyu2764 = true, nivisomu6886 = true, cordonqe4489 = true, slavinyi2147 = true, fatemifo0231 = true, revoirfu3847 = true, roerigme1586 = true, quindtpa8126 = true, cortsyo0474 = true, gruettze1510 = true, killinmo5783 = true, pattievo8834 = true, prusacje6548 = true, omarysa6572 = true,
+		neellefe8346 = true, tyndalva2655 = true, broviabi3826 = true, penaheki0966 = true, withemvi2401 = true, bolkaqa4860 = true, slimpce5165 = true, malamaxa7821 = true, cauldwbi8191 = true, abersoxe9568 = true, hargancu2012 = true, kiracota9623 = true, gongweto5588 = true, hilderke7946 = true, havasdi2417 = true, eppersbo8640 = true, radillgi2710 = true, rehkople7345 = true, velaquba2760 = true, kappenru3713 = true, mirkovdi3461 = true, londerwe9497 = true, wigandku7618 = true, dugarve6568 = true, parnesxu2219 = true, herleibo9704 = true, woleveto3200 = true, vuoloxe8411 = true, zyskowqa1852 = true, heitmeto2252 = true, rinkska1516 = true, burrire0953 = true, saldiege4895 = true, colliflu8073 = true, boscheme1379 = true, puzonho6459 = true, derangci7519 = true, loechere2443 = true, wisteku6206 = true, astleylu2322 = true, keigerro3753 = true, einspapi1927 = true, eisenbxi5038 = true, sianezfo7332 = true, zarellfi6574 = true, limbermu9460 = true, amsterru3444 = true, gentilri2697 = true, casbytu3070 = true, derisco2818 = true, clemenqu7674 = true, mcglumpa1778 = true, schmeisi6177 = true, kudlacqu5447 = true
 
 	},
 }
