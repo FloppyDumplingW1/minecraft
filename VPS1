@@ -1,3 +1,5 @@
+getgenv().AllowedToTrade = false
+
 local Settings = _G.Settings or {
 	MultiAcc = true, -- waits for all accounts to collect chests
 	Players = 5, -- how many accounts you want multiacc to wait for
@@ -6,14 +8,21 @@ local Settings = _G.Settings or {
 	ShowChests = false,
 	CollectOrb = true,
 	AutoExec = true,
+	Gui = true,
 	AutoShutdown = false,
-    Webhook = "https://discord.com/api/webhooks/1287890695767588919/RpV1sUi6okBzzE8HbLtPwPpu-YhmJlNtDyc8tEeY8TT-V7dW3DJq3rQCgeYMnllTW8Ck",
+	AllWebhook = "https://discord.com/api/webhooks/1287890695767588919/RpV1sUi6okBzzE8HbLtPwPpu-YhmJlNtDyc8tEeY8TT-V7dW3DJq3rQCgeYMnllTW8Ck",
+    SpecificWebhook = "https://discord.com/api/webhooks/1305167074506702929/DEi4d9MNzhUkPgvfb4g4uOkFyZ4IrdOWO1IKOxXJsNZyWzxx_DdUyj22778YY0bual37",
     DisableCodex = true,
     FPSBoost = true,
+	MailHuges = false,
+	MailUsers = {},
 	CollectUser = "AlwayzTrading1",
+	KickForNoneFriendly = true,
+	FriendlyAccounts = {
+		"FluffyTornado42", "GalacticNoodle22", "TurboWaffleLizard", "BlurpSnail44", "LavaLampRanger", "BloxCrabNinja", "QuirkyMuffinDash", "MoonlitJello23", "GravityPanda84", "WhimsicalPixelDuck", "DeadRacoon0", "ThunderBunnyFizz", "NeonKoalaTwist", "VortexPickleSnipe", "SizzleStarfish23", "AstroSushiWave", "TurboKoalaBlaze", "CosmicTacoLuna", "AtomicTurtleStorm", "FunkySpaceWalrus", "ChocoLlamaZap", "PixelPuffinBlast", "CitrusSprinkleFury", "RainbowPlatypus99", "TwinkleRhinoZap", "SparkleDragonToast", "MelonSharkByte", "GlitchCactusFunk", "QuantumLobsterFizz", "ToastyPhoenixRex", "TurboOcelotGlow", "NebulaMonkeyFizz", "CosmicRhinoDash", "LavaMuffinRumble", "PuddlePuffinBlitz", "WackyTacoSnipe", "PixelGlitchLynx", "VortexPuddle83", "JellybeanThunderLynx", "QuantumWombatBlitz", "TurboFlamingoFizz", "NebulaTigerZap", "AstroTurtleSprout", "SparkleFrogRocket", "CactusGlitchGazer", "VortexUnicornZap", "TwistyKoalaZap", "SizzleOctopusWave", "BlazingPandaPunch", "JellyMangoBlitz", "QuantumOtterDash", "GlitchyYetiCrunch", "PixelWaspFusion", "ThunderKoalaTwist", "CosmicMooseFizz", "JellyfishCometSnipe", "ToastyZebraBlitz", "TurboCactusNinja", "SneezyPandaZap", "FrostyGorillaBuzz", "CosmicChameleonRex", "FluffyNoodleDash", "QuantumPandaFizz", "BlazingSphinxByte", "WhiskerNinjaZap", "QuirkyLobsterWhirl", "FrostedLlamaSnipe", "BlazingOtterZoom", "TurboWombatTwist", "CosmicTigerSprout", "PixelFrogBlast", "PuddlePenguinNinja", "TurboMothFusion", "QuirkyNarwhalByte", "SparkleLynxDash"
+		
+	},
 }
-
-getgenv().AllowedToTrade = false
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -47,6 +56,7 @@ local os = os
 
 -- Variables
 local Player = game.Players.LocalPlayer
+local Players = game.Players
 local ActiveFolder = workspace.__THINGS.__INSTANCE_CONTAINER.Active
 local ReplicatedStorage = cloneref(game.ReplicatedStorage)
 local library = ReplicatedStorage:WaitForChild("Library")
@@ -54,6 +64,7 @@ local coreClient = library:WaitForChild("Client")
 local startTime = tick()
 local clientSave = require(library:WaitForChild("Client").Save).Get()
 local MasteryCmds = require(game.ReplicatedStorage.Library.Client.MasteryCmds)
+local InventoryCmds = require(game.ReplicatedStorage.Library.Client.InventoryCmds)
 
 local InstancingCmds = require(ReplicatedStorage.Library.Client.InstancingCmds)
 local Orb = require(ReplicatedStorage.Library.Client.OrbCmds.Orb)
@@ -215,6 +226,70 @@ do
 	end
 end
 
+function SendHuge()
+    local HugeUID = nil
+    local RandomUser = Settings.MailUsers[math.random(1, #Settings.MailUsers)]
+
+    for Class, classTables in pairs(InventoryCmds.State().container._store._byType) do
+        if Class == "Pet" then
+            for uid, Item in pairs(classTables._byUID) do
+
+                if Item._data.id == "Huge Fossil Dragon" then
+                    HugeUID = uid
+                    -- print("Found Huge Fossil Dragon: Class:", Class, "UID:", uid, "Item:", Item._data.id) 
+                    break -- Exit loop when found
+                end
+            end
+        end
+        if HugeUID then break end -- Stop once the huge pet is found
+    end
+
+	if HugeUID then
+        local args = {
+            [1] = RandomUser,
+            [2] = "Another One!",
+            [3] = "Pet",
+            [4] = HugeUID,
+            [5] = 1
+        }
+        game:GetService("ReplicatedStorage").Network:FindFirstChild("Mailbox: Send"):InvokeServer(unpack(args))
+    end
+end
+
+task.spawn(function()
+	if Settings.KickForNoneFriendly then
+		while task.wait(30) do
+			for _, player in ipairs(Players:GetChildren()) do
+				if player.Name == Player.Name or player.Name == "Sky" then
+					continue 
+				end
+				local isWhitelisted = Settings.FriendlyAccounts[player.Name]
+				if not isWhitelisted then
+					Player:Kick(player.Name .. " is not whitelisted.")
+					task.wait(5)
+					game:Shutdown()
+				end
+				task.wait(0.1)
+			end
+		end
+	end
+end)
+
+task.spawn(function()
+	while not getgenv().AllowedToTrade do
+		if game.Players:FindFirstChild(Settings.CollectUser) then
+			--print(Settings.CollectUser .. " joined. Digging has been paused.")
+			getgenv().AllowedToTrade = true
+		end
+		task.wait(10)
+	end
+end)
+
+task.spawn(function()
+	while task.wait(10) do
+		SendHuge()
+	end
+end)
 
 local Hooks = {}
 local Connections = {}
@@ -294,7 +369,7 @@ function Mine()
 		local Shutdown = not Settings.MultiAcc or (Settings.MultiAcc and CheckLayersComplete())
 		if Shutdown then
 			Player:Kick("Auto Shutdown")
-			-- game:Shutdown() -- Test
+			game:Shutdown() -- Test
 		end
 	end
 
@@ -324,15 +399,7 @@ function Mine()
 	local ChestLayer = Settings.MultiAcc and 15 or 3
 	local Layer = 1
 
-	while true do
-
-		if game.Players:FindFirstChild(Settings.CollectUser) then
-			print(Settings.CollectUser .. " joined. Digging has been paused.")
-			getgenv().AllowedToTrade = true
-			while true do
-				task.wait(5)
-			end
-		end
+	while not getgenv().AllowedToTrade do
 
 		if Settings.MultiAcc then
 			local Block = LayerTable[Layer][OwnRole]
@@ -353,7 +420,6 @@ function Mine()
                     task.wait()
                 end
             end
-            
 		else
 			for _, Block in LayerTable[Layer] do
                 if Utils.GetBlock(Block) then
@@ -496,119 +562,121 @@ function Load()
             for _,v in game.Workspace:GetDescendants() do Graphics(v) end
         end
 
-        local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-		local screenGui = game:GetService("Players").LocalPlayer.PlayerGui.Starter:Clone()
-		screenGui.Name = "Starter_tEST"
-		screenGui.ResetOnSpawn = false
-		screenGui.Frame.ZIndex = 2
-		screenGui.Frame.Pets:Destroy()
-		screenGui.Frame.Ok:Destroy()
-		screenGui.Frame.background:Destroy()
-		screenGui.Frame.shadow:Destroy()
-		screenGui.Frame.TextLabel.Name = "Title"
+		if Settings.Gui then
+			local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+			local screenGui = game:GetService("Players").LocalPlayer.PlayerGui.Starter:Clone()
+			screenGui.Name = "Starter_tEST"
+			screenGui.ResetOnSpawn = false
+			screenGui.Frame.ZIndex = 2
+			screenGui.Frame.Pets:Destroy()
+			screenGui.Frame.Ok:Destroy()
+			screenGui.Frame.background:Destroy()
+			screenGui.Frame.shadow:Destroy()
+			screenGui.Frame.TextLabel.Name = "Title"
 
-		local HugeCount = game:GetService("Players").LocalPlayer.PlayerGui.Mastery.Frame.Container.ItemsFrame.Digging:Clone()
-		HugeCount.Position = UDim2.new(0.35, 0, 0.05, 0)
-		HugeCount.Size = UDim2.new(0.3, 0, 0.5, 0)
-		HugeCount.ZIndex = 2
-		HugeCount.Name = "HugeCount"
-		HugeCount.Icon.Image = "rbxassetid://14976436145"
-		HugeCount.CircularBar:Destroy()
-		HugeCount.UIStroke:Destroy()
-		HugeCount.UICorner:Destroy()
-		HugeCount.Level.Text = "???"
-		HugeCount.LevelTitle.Text = ""
-		HugeCount.Parent = screenGui.Frame
+			local HugeCount = game:GetService("Players").LocalPlayer.PlayerGui.Mastery.Frame.Container.ItemsFrame.Digging:Clone()
+			HugeCount.Position = UDim2.new(0.35, 0, 0.05, 0)
+			HugeCount.Size = UDim2.new(0.3, 0, 0.5, 0)
+			HugeCount.ZIndex = 2
+			HugeCount.Name = "HugeCount"
+			HugeCount.Icon.Image = "rbxassetid://14976436145"
+			HugeCount.CircularBar:Destroy()
+			HugeCount.UIStroke:Destroy()
+			HugeCount.UICorner:Destroy()
+			HugeCount.Level.Text = "???"
+			HugeCount.LevelTitle.Text = ""
+			HugeCount.Parent = screenGui.Frame
 
-		local Username = screenGui.Frame.Title:Clone()
-		Username.TextScaled = true -- Enable scaling so it adjusts to screen size
-		Username.Position = UDim2.new(0.5, 0, 0.45, 0) -- Move the Username higher
-		Username.Size = UDim2.new(0.9, 0, 0.2, 0) -- Adjust size for proper scaling
-		Username.Text = game.Players.LocalPlayer.Name
-		Username.ZIndex = 3
-		Username.Name = "Username"
-		Username.Parent = screenGui.Frame
+			local Username = screenGui.Frame.Title:Clone()
+			Username.TextScaled = true -- Enable scaling so it adjusts to screen size
+			Username.Position = UDim2.new(0.5, 0, 0.45, 0) -- Move the Username higher
+			Username.Size = UDim2.new(0.9, 0, 0.2, 0) -- Adjust size for proper scaling
+			Username.Text = game.Players.LocalPlayer.Name
+			Username.ZIndex = 3
+			Username.Name = "Username"
+			Username.Parent = screenGui.Frame
 
-		local DigRank = screenGui.Frame.Title:Clone()
-		DigRank.TextScaled = true -- Enable scaling so it adjusts to screen size
-		DigRank.Position = UDim2.new(0.5, 0, 0.61, 0) -- Positioned below the Username
-		DigRank.Size = UDim2.new(0.55, 0, 0.2, 0) -- Match size to Username for consistent scaling
-		DigRank.Text = "Dig Rank: ???"
-		DigRank.ZIndex = 3
-		DigRank.Name = "DigRank"
-		DigRank.Parent = screenGui.Frame
+			local DigRank = screenGui.Frame.Title:Clone()
+			DigRank.TextScaled = true -- Enable scaling so it adjusts to screen size
+			DigRank.Position = UDim2.new(0.5, 0, 0.61, 0) -- Positioned below the Username
+			DigRank.Size = UDim2.new(0.55, 0, 0.2, 0) -- Match size to Username for consistent scaling
+			DigRank.Text = "Dig Rank: ???"
+			DigRank.ZIndex = 3
+			DigRank.Name = "DigRank"
+			DigRank.Parent = screenGui.Frame
 
-		local PlaytimeTextLabel2 = screenGui.Frame.Title:Clone()
-		PlaytimeTextLabel2.Position = UDim2.new(0.5, 0, 0.8, 0)
-		PlaytimeTextLabel2.Text = os.date("!%X", tick() - startTime)
-		PlaytimeTextLabel2.ZIndex = 2
-		PlaytimeTextLabel2.Name = "Time"
-		PlaytimeTextLabel2.Parent = screenGui.Frame
+			local PlaytimeTextLabel2 = screenGui.Frame.Title:Clone()
+			PlaytimeTextLabel2.Position = UDim2.new(0.5, 0, 0.8, 0)
+			PlaytimeTextLabel2.Text = os.date("!%X", tick() - startTime)
+			PlaytimeTextLabel2.ZIndex = 2
+			PlaytimeTextLabel2.Name = "Time"
+			PlaytimeTextLabel2.Parent = screenGui.Frame
 
-		local Chest = screenGui.Frame.Title:Clone()
-		Chest.Position = UDim2.new(0.2, 0, 0.8, 0)
-		Chest.Text = "100"
-		Chest.ZIndex = 2
-		Chest.Name = "Chest"
-		Chest.TextColor3 = Color3.fromRGB(167, 167, 0)
-		Chest.Parent = screenGui.Frame
+			local Chest = screenGui.Frame.Title:Clone()
+			Chest.Position = UDim2.new(0.2, 0, 0.8, 0)
+			Chest.Text = "100"
+			Chest.ZIndex = 2
+			Chest.Name = "Chest"
+			Chest.TextColor3 = Color3.fromRGB(167, 167, 0)
+			Chest.Parent = screenGui.Frame
 
-		local Block = screenGui.Frame.Title:Clone()
-		Block.Position = UDim2.new(0.8, 0, 0.8, 0)
-		Block.Text = "100"
-		Block.ZIndex = 2
-		Block.Name = "Block"
-		Block.TextColor3 = Color3.fromRGB(162, 95, 23)
-		Block.Parent = screenGui.Frame
+			local Block = screenGui.Frame.Title:Clone()
+			Block.Position = UDim2.new(0.8, 0, 0.8, 0)
+			Block.Text = "100"
+			Block.ZIndex = 2
+			Block.Name = "Block"
+			Block.TextColor3 = Color3.fromRGB(162, 95, 23)
+			Block.Parent = screenGui.Frame
 
-		local frame = Instance.new("Frame")
-		frame.Size = UDim2.new(2, 0, 2, 0) -- Fullscreen
-		frame.Position = UDim2.new(0, 0, 0, -200) -- Obere linke Ecke
-		frame.BackgroundColor3 = Color3.new(1, 1, 1) -- Weiß
-		frame.BorderSizePixel = 0 -- Kein Rand
-		frame.ZIndex = 1
-		frame.Name = "WhiteScreen"
-		frame.Parent = screenGui
+			local frame = Instance.new("Frame")
+			frame.Size = UDim2.new(2, 0, 2, 0) -- Fullscreen
+			frame.Position = UDim2.new(0, 0, 0, -200) -- Obere linke Ecke
+			frame.BackgroundColor3 = Color3.new(1, 1, 1) -- Weiß
+			frame.BorderSizePixel = 0 -- Kein Rand
+			frame.ZIndex = 1
+			frame.Name = "WhiteScreen"
+			frame.Parent = screenGui
 
-		screenGui.Parent = playerGui
-		screenGui.Enabled = true
-		screenGui.Frame.Title:Destroy()
-    
-    
-        function getInventoryDragons()
-            local count = 0
-            for i,v in clientSave["Inventory"]["Pet"] do
-                if v.id ~= "Huge Fossil Dragon"then continue end
-                count += 1
-            end
-            return count
-        end
+			screenGui.Parent = playerGui
+			screenGui.Enabled = true
+			screenGui.Frame.Title:Destroy()
+		
+		
+			function getInventoryDragons()
+			    local count = 0
+			    for i,v in clientSave["Inventory"]["Pet"] do
+			        if v.id ~= "Huge Fossil Dragon"then continue end
+			        count += 1
+			    end
+			    return count
+			end
 
-		function getRank()
-			return MasteryCmds.GetLevel({_id = "Digging"})
+			function getRank()
+				return MasteryCmds.GetLevel({_id = "Digging"})
+			end
+		
+			function update_UI() --G
+			    pcall(function()
+			        PlaytimeTextLabel2.Text = os.date("!%X", tick() - startTime)
+			        HugeCount.Level.Text = getInventoryDragons()
+			        Block.Text = formatNumber(UI_Stats.Blocks)
+			        Chest.Text = formatNumber(UI_Stats.Chests)
+					DigRank.Text = "Dig Rank: " .. getRank()
+			    end)
+			end
+		
+			task.spawn(function()
+			    local Wait20Times = 0
+			    while task.wait(.5) do
+			        Wait20Times += 1
+			        update_UI()
+		
+			        if Wait20Times >= 20 then
+			            Wait20Times = 0
+			        end
+			    end
+			end)
 		end
-    
-        function update_UI() --G
-            pcall(function()
-                PlaytimeTextLabel2.Text = os.date("!%X", tick() - startTime)
-                HugeCount.Level.Text = getInventoryDragons()
-                Block.Text = formatNumber(UI_Stats.Blocks)
-                Chest.Text = formatNumber(UI_Stats.Chests)
-				DigRank.Text = "Dig Rank: " .. getRank()
-            end)
-        end
-    
-        task.spawn(function()
-            local Wait20Times = 0
-            while task.wait(.5) do
-                Wait20Times += 1
-                update_UI()
-    
-                if Wait20Times >= 20 then
-                    Wait20Times = 0
-                end
-            end
-        end)
     end
 
 
@@ -722,21 +790,149 @@ local FireCustomFromServerConnection = Network.Fired("Instancing_FireCustomFromS
 table.insert(Connections, FireCustomFromServerConnection)
 
 local ActiveChildAddedConnection = ActiveFolder.ChildAdded:Connect(function(Child)
-	if Child.Name ~= "Digsite" then
-		return
-	end
-
-	task.wait(Settings.DelayForMining)
-
-    if Settings.Webhook ~= "" then
-	task.spawn(function()
-	        _G.Webhook = Settings.Webhook
-	        loadstring(game:HttpGet("https://raw.githubusercontent.com/Pryxo/Hub/main/PS99%20Huge%20Webhook"))()
-	end)
+    if Child.Name ~= "Digsite" then
+        return
     end
 
-	table.insert(Threads, task.spawn(Load))
+    task.wait(Settings.DelayForMining)
+
+    if Settings.AllWebhook ~= "" then
+        task.spawn(function()
+
+            if not game:IsLoaded() then 
+                game.Loaded:Wait() 
+            end
+
+            repeat wait() until game.Players
+            repeat wait() until game.Players.LocalPlayer
+            repeat wait() until game.Players.LocalPlayer.Character
+            repeat wait() until game.Players.LocalPlayer.Character.HumanoidRootPart
+            repeat wait() until game.ReplicatedStorage
+            repeat wait() until game.ReplicatedStorage.Library
+
+            local Senv = {
+                Save = getsenv(game.ReplicatedStorage.Library:FindFirstChild("Save", true)),
+            }
+
+            local Upvalues = {
+                Save = getupvalue(Senv.Save.Update, 1),
+            }
+
+            local Player = game.Players.LocalPlayer
+
+            local Inventory = {
+                Pets = {}
+            }
+
+            function make_inventory()
+                local Current_Inv = Upvalues.Save[Player].Inventory.Pet
+
+                for i,v in Current_Inv do
+                    if v._am then
+                        Inventory.Pets[i] = v._am
+                    elseif Inventory.Pets[i] then
+                        Inventory.Pets[i] += 1
+                    else
+                        Inventory.Pets[i] = 1
+                    end
+                end
+            end
+            make_inventory()
+
+            function get_inventory()
+                local Current_Inv = Upvalues.Save[Player].Inventory.Pet
+                local Sorted_Inv = {}
+
+                for i,v in Current_Inv do
+                    if v._am then
+                        Sorted_Inv[i] = v._am
+                    elseif Sorted_Inv[i] then
+                             Sorted_Inv[i] += 1
+                    else
+                        Sorted_Inv[i] = 1
+                    end
+                end
+                return Sorted_Inv
+            end
+
+            function check_inventory()
+                local Current_Inv = get_inventory()
+                local New_Pets = {}
+
+                for i,v in Current_Inv do
+                    if not Inventory.Pets[i] then
+                        local current_invetory = Upvalues.Save[Player].Inventory.Pet
+                        local Name = (current_invetory[i].sh == true and "Shiny " or "")..(current_invetory[i].pt == 1 and "Golden " or current_invetory[i].pt == 2 and "Rainbow " or "")..Upvalues.Save[Player].Inventory.Pet[i].id
+                        New_Pets[Name] = Upvalues.Save[Player].Inventory.Pet[i].id
+                    end
+                end
+
+                return New_Pets
+            end
+
+            function SendWebhookLog(Table, WebhookUrl)
+                local Body = game:GetService("HttpService"):JSONEncode(Table)
+                local req = request or http.request
+                if req ~= nil then
+                    local Result = req({
+                        Url = WebhookUrl, 
+                        Method = "POST",
+                        Headers = {
+                            ['Content-Type'] = "application/json"
+                        },
+                        Body = Body;
+                    })
+
+                    return Result
+                end
+            end
+
+            while task.wait(10) do
+                for i,v in check_inventory() do
+                    if string.find(i, "Huge") then
+                        local image_id = nil
+
+                        for _,Pet in game:GetService("ReplicatedStorage").__DIRECTORY.Pets:GetDescendants() do
+                            if Pet.Name == v then
+                                if string.find(i, "Golden ") then
+                                    image_id = string.gsub(require(Pet).goldenThumbnail, "%D", "")
+                                else
+                                    image_id = string.gsub(require(Pet).thumbnail, "%D", "")
+                                end
+                            end
+                        end
+
+                        local embedMessage = {
+                            content = "",
+                            embeds = {
+                                {
+                                    ["title"] = "Obtained a ".. i,
+                                    ["color"] = 16771840,
+                                    ["thumbnail"] = {
+                                        ["url"] = "https://biggamesapi.io/image/"..image_id
+                                    }
+                                }
+                            }
+                        }
+
+                        SendWebhookLog(embedMessage, Settings.AllWebhook)
+						--if Settings.MailHuges then SendHuge() end
+
+                        if Settings.SpecificWebhook ~= "" then
+                            SendWebhookLog(embedMessage, Settings.SpecificWebhook)
+                        end
+
+                        make_inventory()
+                    end
+                end
+            end
+
+        end)
+    end
+
+    table.insert(Threads, task.spawn(Load))
 end)
+
 
 table.insert(Connections, ActiveChildAddedConnection)
 
@@ -750,33 +946,35 @@ end)
 
 table.insert(Connections, ActiveChildRemovedConnection)
 
+task.wait(5)
 
+if not getgenv().AllowedToTrade then
+	if ActiveFolder:FindFirstChild("Digsite") then
+		
+		local DigsiteClientModule = require(ActiveFolder.Digsite.ClientModule)
+		-- local InitFunction = getupvalue(DigsiteClientModule.OnJoin, 4)
 
-if ActiveFolder:FindFirstChild("Digsite") then
-	local DigsiteClientModule = require(ActiveFolder.Digsite.ClientModule)
-	-- local InitFunction = getupvalue(DigsiteClientModule.OnJoin, 4)
+		Load()
 
-	Load()
-
-	DigsiteClientModule.Networking.ResetState()
-	-- InitFunction()
-else
-	if Settings.AutoExec then
-		table.insert(Threads, task.spawn(function()
-			task.wait(3) -- gonna get removed when remove all is made
-			setthreadidentity(2)
-			while true do
-				if not InstancingCmds.IsInInstance() then
-					InstancingCmds.Enter("Digsite")
+		DigsiteClientModule.Networking.ResetState()
+		-- InitFunction()
+	else
+		if Settings.AutoExec then
+			table.insert(Threads, task.spawn(function()
+				task.wait(3) -- gonna get removed when remove all is made
+				setthreadidentity(2)
+				while true do
+					if not InstancingCmds.IsInInstance() then
+						InstancingCmds.Enter("Digsite")
+					end
+					task.wait()
 				end
-				task.wait()
-			end
-			setthreadidentity(8)
+				setthreadidentity(8)
 
 
-		end))
+			end))
+		end
 	end
 end
-
 
 Loaded = true
